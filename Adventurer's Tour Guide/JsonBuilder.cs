@@ -12,6 +12,8 @@ namespace Adventurer_Tour_Guide
     class JsonBuilder
     {
         public static JArray root = new JArray();
+        public static readonly string Path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal) + "\\AdventurerTourGuide";
+        public static readonly string JSONPath = Path + "\\ATGEntries.json";
 
         //Create the JSON file
         public static void CreateJSON()
@@ -56,9 +58,7 @@ namespace Adventurer_Tour_Guide
             string json = JsonConvert.SerializeObject(root.ToArray());
 
             //write string to file
-            string Path = System.Environment.GetFolderPath(
-                    System.Environment.SpecialFolder.Personal);
-            System.IO.File.WriteAllText(Path + "\\AdventurerTourGuide\\ATGEntries.json", json);
+            System.IO.File.WriteAllText(Path + "\\ATGEntries.json", json);
         }
 
         //Load JSON from file
@@ -66,7 +66,7 @@ namespace Adventurer_Tour_Guide
         {
             string Path = System.Environment.GetFolderPath(
                     System.Environment.SpecialFolder.Personal);
-            using (StreamReader r = new StreamReader(Path + "\\AdventurerTourGuide\\ATGEntries.json"))
+            using (StreamReader r = new StreamReader(Path + "\\ATGEntries.json"))
             {
                 string json = r.ReadToEnd();
                 entries = JsonConvert.DeserializeObject<List<Entry>>(json);

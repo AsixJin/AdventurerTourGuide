@@ -32,18 +32,29 @@ namespace Adventurer_Tour_Guide
         static string ApplicationName = "Adventurer Tour Guide";
         public static List<Entry> EntryList = new List<Entry>();
 
+        
+
         public MainWindow()
         {
             InitializeComponent();
             GetCred();
+            if (!Directory.Exists(JsonBuilder.Path))
+            {
+                Directory.CreateDirectory(JsonBuilder.Path);
+            }
+            if (System.IO.File.Exists(JsonBuilder.JSONPath))
+            {
+                JsonBuilder.LoadJSONfromFile(EntryList);
+            }
 
             /* The JSON file will need to be loaded from the Drive
             and saved locally. If no internet is avaiable or something
             is wrong we will use the local copy. */
-             
+
+            ComBox_EntryList.ItemsSource = EntryList;
             if (EntryList.Count != 0)
             {
-                ComBox_EntryList.ItemsSource = EntryList;
+                ComBox_EntryList.SelectedIndex = 0;
             }
             
         }
@@ -79,13 +90,13 @@ namespace Adventurer_Tour_Guide
 
         private void But_Add_Click(object sender, RoutedEventArgs e)
         {
-            EntryEditor main = new EntryEditor(true);
+            EntryEditor main = new EntryEditor();
             main.ShowDialog();
         }
 
         private void But_Edit_Click(object sender, RoutedEventArgs e)
         {
-            EntryEditor main = new EntryEditor(false);
+            EntryEditor main = new EntryEditor();
             main.ShowDialog();
         }
     }
