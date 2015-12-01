@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Adventurer_Tour_Guide"
         mc:Ignorable="d"
-        Title="EntryEditor" Height="232.903" Width="483.186">
+        Title="EntryEditor" Height="232.903" Width="483.186" Closing="Window_Closing">
     <Grid Background="#FF3E2F07">
         <TextBox x:Name="TexBox_Title" HorizontalAlignment="Left" Height="23" Margin="127,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="338"/>
         <TextBox x:Name="TexBox_Description" HorizontalAlignment="Left" Height="23" Margin="127,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="338"/>

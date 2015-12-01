@@ -127,6 +127,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entry.cs" />
     <Compile Include="EntryEditor.xaml.cs">
       <DependentUpon>EntryEditor.xaml</DependentUpon>
     </Compile>

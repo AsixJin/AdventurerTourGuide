@@ -28,8 +28,9 @@ namespace Adventurer_Tour_Guide
     /// </summary>
     public partial class MainWindow : Window
     {
-        static string[] Scopes = { DriveService.Scope.DriveReadonly };
-        static string ApplicationName = "Adventurer Tour Guide";
+        
+
+        public static List<string> sEntryList = new List<string>();
         public static List<Entry> EntryList = new List<Entry>();
 
         
@@ -37,83 +38,119 @@ namespace Adventurer_Tour_Guide
         public MainWindow()
         {
             InitializeComponent();
-            GetCred();
             if (!Directory.Exists(JsonBuilder.Path))
             {
                 Directory.CreateDirectory(JsonBuilder.Path);
             }
             if (System.IO.File.Exists(JsonBuilder.JSONPath))
             {
-                JsonBuilder.LoadJSONfromFile(EntryList);
+                EntryList = JsonBuilder.LoadJSONfromFile();
+                UpdateList();
             }
 
             /* The JSON file will need to be loaded from the Drive
             and saved locally. If no internet is avaiable or something
             is wrong we will use the local copy. */
 
-            ComBox_EntryList.ItemsSource = EntryList;
-            if (EntryList.Count != 0)
+            if (sEntryList.Count != 0)
             {
                 ComBox_EntryList.SelectedIndex = 0;
             }
             
         }
 
-        public void GetCred()
+        
+
+        public void RefreshActiveEntry()
         {
-            //Get Credential
-            UserCredential credential;
-
-            using (var stream =
-                new FileStream("client_secret.json", FileMode.Open, FileAccess.Read))
+            foreach (Entry ee in EntryList)
             {
-                string credPath = System.Environment.GetFolderPath(
-                    System.Environment.SpecialFolder.Personal);
-                credPath = Path.Combine(credPath, ".credentials/drive-dotnet-quickstart");
-
-                credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.Load(stream).Secrets,
-                    Scopes,
-                    "user",
-                    CancellationToken.None,
-                    new FileDataStore(credPath, true)).Result;
-                Console.WriteLine("Credential file saved to: " + credPath);
+                if (ee.Title.Equals(ComBox_EntryList.SelectedItem.ToString()))
+                {
+                    texBlock_EntryTitle.Text = ee.Title;
+                    texBox_Description.Text = ee.Description;
+                    texBox_Details.Text = ee.Details;
+                    break;
+                }
             }
+        }
 
-            // Create Drive API service.
-            var service = new DriveService(new BaseClientService.Initializer()
+        public void UpdateList()
+        {
+            sEntryList = new List<string>();
+            foreach(Entry e in EntryList)
             {
-                HttpClientInitializer = credential,
-                ApplicationName = ApplicationName,
-            });
+                sEntryList.Add(e.Title);
+            }
+            sEntryList.Sort();
+            ComBox_EntryList.ItemsSource = sEntryList;
+            ComBox_EntryList.SelectedIndex = 0;
+            RefreshActiveEntry();
         }
 
         private void But_Add_Click(object sender, RoutedEventArgs e)
         {
-            EntryEditor main = new EntryEditor();
+            EntryEditor main = new EntryEditor(this);
             main.ShowDialog();
         }
 
         private void But_Edit_Click(object sender, RoutedEventArgs e)
         {
-            EntryEditor main = new EntryEditor();
+            int selected = 0;
+            for(int i = 0; i > MainWindow.EntryList.Count-1; i++)
+            {
+                if (MainWindow.EntryList[i].Title.Equals(ComBox_EntryList.SelectedItem.ToString()))
+                {
+                    selected = i;
+                    break;   
+                }
+            }
+            EntryEditor main = new EntryEditor(this, selected);
             main.ShowDialog();
         }
-    }
 
-    public class Entry
-    {
-        public string Title;
-        public string Descritpion;
-        public string Details;
-
-        public Entry(string mTitle, string mDescription, string mDetails)
+        private void ComBox_EntryList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Title = mTitle;
-            Descritpion = mDescription;
-            Details = mDetails;
+            try
+            {
+                RefreshActiveEntry();
+            }
+            catch(Exception ee)
+            {
+                Console.WriteLine(ee.Message);
+                
+
+            }
+            
         }
+
+        private void But_Delete_Click(object sender, RoutedEventArgs e)
+        {
+            int selected = 0;
+            for (int i = 0; i > MainWindow.EntryList.Count-1; i++)
+            {
+                if (MainWindow.EntryList[i].Title.Equals(ComBox_EntryList.SelectedItem.ToString()))
+                {
+                    selected = i;
+                    break;
+                }
+            }
+            MainWindow.EntryList.RemoveAt(selected);
+            UpdateList();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            JsonBuilder.CreateJSON();
+            foreach (Entry ee in EntryList)
+            {
+                JsonBuilder.AddEntry(ee);
+            }
+            JsonBuilder.SaveJSONtoFile();
+        }
+
     }
+
 }
     
             
