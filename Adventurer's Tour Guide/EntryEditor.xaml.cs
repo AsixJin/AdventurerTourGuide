@@ -70,5 +70,13 @@ namespace Adventurer_Tour_Guide
         {
             main.UpdateList();
         }
+
+        private void textBlock2_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Return)
+            {
+                TexBox_Details.Text += "\n";
+            }
+        }
     }
 }

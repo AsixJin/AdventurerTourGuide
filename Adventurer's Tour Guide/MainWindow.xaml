@@ -11,9 +11,9 @@
         <Button x:Name="But_Add" Content="Add Entry" Margin="10,159,288,0" Height="20" VerticalAlignment="Top" Click="But_Add_Click"/>
         <Button x:Name="But_Edit" Content="Edit Entry" Margin="10,184,288,0" Height="20" VerticalAlignment="Top" Click="But_Edit_Click"/>
         <Button x:Name="But_Delete" Content="Delete Entry" Margin="10,209,288,0" Height="20" VerticalAlignment="Top" Click="But_Delete_Click"/>
-        <TextBlock x:Name="texBlock_EntryTitle" Margin="236,10,10,0" TextWrapping="Wrap" Text="TextBlock" FontSize="32" Height="43" VerticalAlignment="Top" Foreground="White"/>
-        <TextBox x:Name="texBox_Description" Margin="236,64,10,183" TextWrapping="Wrap" Text="N/A" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
-        <TextBox x:Name="texBox_Details" Margin="236,159,10,10" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+        <TextBlock x:Name="texBlock_EntryTitle" Margin="236,10,10,0" TextWrapping="Wrap" Text="TextBlock" FontSize="32" Height="43" VerticalAlignment="Top" Foreground="White" TextAlignment="Center"/>
+        <TextBox x:Name="texBox_Details" Margin="236,113,10,10" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+        <TextBlock x:Name="TexBlox_Description" Margin="236,64,10,0" TextWrapping="Wrap" Text="Description" VerticalAlignment="Top" Height="44" Foreground="White" TextAlignment="Center"/>
 
     </Grid>
 </Window>

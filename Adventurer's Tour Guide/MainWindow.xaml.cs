@@ -68,7 +68,7 @@ namespace Adventurer_Tour_Guide
                 if (ee.Title.Equals(ComBox_EntryList.SelectedItem.ToString()))
                 {
                     texBlock_EntryTitle.Text = ee.Title;
-                    texBox_Description.Text = ee.Description;
+                    TexBlox_Description.Text = ee.Description;
                     texBox_Details.Text = ee.Details;
                     break;
                 }
