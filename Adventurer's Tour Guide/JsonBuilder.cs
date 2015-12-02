@@ -18,8 +18,9 @@ namespace Adventurer_Tour_Guide
 {
     class JsonBuilder
     {
-        static string[] Scopes = { DriveService.Scope.DriveReadonly };
-        static string ApplicationName = "Adventurer Tour Guide";
+        static DriveService mService;
+        static string[] Scopes = { DriveService.Scope.Drive };
+        static string ApplicationName = "adventurers-tour-guide";
 
         public static JArray root = new JArray();
         public static readonly string Path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal) + "\\AdventurerTourGuide";
@@ -82,6 +83,8 @@ namespace Adventurer_Tour_Guide
 
             //write string to file
             System.IO.File.WriteAllText(JSONPath, json);
+
+            SaveJSONtoDrive();
         }
 
         //Load JSON from file
@@ -99,8 +102,35 @@ namespace Adventurer_Tour_Guide
         //Save JSON to GDrive
         public static void SaveJSONtoDrive()
         {
+      
             GetCred();
-        }
+            // File's metadata.
+            Google.Apis.Drive.v2.Data.File body = new Google.Apis.Drive.v2.Data.File();
+            body.Title = "ATGEntries.txt";
+            body.Description = "Database JSON for Adventurer's Tour Guide";
+            //body.MimeType = "application/json";
+            body.MimeType = "text/plain";
+            body.Parents = new List<ParentReference>() { new ParentReference() { Id = "root" } };
+
+            // File's content.
+            byte[] byteArray = System.IO.File.ReadAllBytes(Path + "\\ATGEntries.txt");
+            MemoryStream stream = new MemoryStream(byteArray);
+            try
+            {
+                FilesResource.InsertMediaUpload request = mService.Files.Insert(body, stream, "text/plain");
+                request.UploadAsync();
+
+                Google.Apis.Drive.v2.Data.File file = request.ResponseBody;
+
+                // Uncomment the following line to print the File ID.
+                Console.WriteLine("File ID: " + file.Id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("An error occurred: " + e.Message);
+              
+            }
+    }
 
         //Load JSON from GDrive
         public static void LoadJSONfromDrive()
@@ -115,7 +145,7 @@ namespace Adventurer_Tour_Guide
             UserCredential credential;
 
             using (var stream =
-                new FileStream("client_secret.json", FileMode.Open, FileAccess.Read))
+                new FileStream(Path + "\\client_secret.json", FileMode.Open, FileAccess.Read))
             {
                 string credPath = System.Environment.GetFolderPath(
                     System.Environment.SpecialFolder.Personal);
@@ -136,6 +166,8 @@ namespace Adventurer_Tour_Guide
                 HttpClientInitializer = credential,
                 ApplicationName = ApplicationName,
             });
+
+            mService = service;
         }
     }
 }
