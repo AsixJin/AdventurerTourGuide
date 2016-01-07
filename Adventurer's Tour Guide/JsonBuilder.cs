@@ -63,6 +63,7 @@ namespace Adventurer_Tour_Guide
             root.Add(entry);
         }
 
+        //Takes an Entry object and add it to the root
         public static void AddEntry(Entry mEntry)
         {
             JObject entry = new JObject();
@@ -108,6 +109,7 @@ namespace Adventurer_Tour_Guide
             return entries;
         }
 
+        #region GDrive Methods
         //Creates JSON file on GDrive if one doesn't exist or if 1st run
         public static void CreateJSONonDrive()
         {
@@ -183,5 +185,6 @@ namespace Adventurer_Tour_Guide
 
             mService = service;
         }
+        #endregion
     }
 }

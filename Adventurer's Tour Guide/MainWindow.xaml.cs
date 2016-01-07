@@ -28,12 +28,10 @@ namespace Adventurer_Tour_Guide
     /// </summary>
     public partial class MainWindow : Window
     {
-        
-
-        public static List<string> sEntryList = new List<string>();
-        public static List<Entry> EntryList = new List<Entry>();
-
-        
+        #region Members (List)
+        public static List<string> sEntryList = new List<string>(); //String list for ComboBox
+        public static List<Entry> EntryList = new List<Entry>(); //Entry list
+        #endregion
 
         public MainWindow()
         {
@@ -59,8 +57,45 @@ namespace Adventurer_Tour_Guide
             
         }
 
-        
+        #region Button Events
+        private void But_Add_Click(object sender, RoutedEventArgs e)
+        {
+            EntryEditor main = new EntryEditor(this);
+            main.ShowDialog();
+        }
 
+        private void But_Edit_Click(object sender, RoutedEventArgs e)
+        {
+            int selected = 0;
+            for (int i = 0; i <= MainWindow.EntryList.Count - 1; i++)
+            {
+                if (MainWindow.EntryList[i].Title.Equals(ComBox_EntryList.SelectedItem.ToString()))
+                {
+                    selected = i;
+                    break;
+                }
+            }
+            EntryEditor main = new EntryEditor(this, selected);
+            main.ShowDialog();
+        }
+
+        private void But_Delete_Click(object sender, RoutedEventArgs e)
+        {
+            int selected = 0;
+            for (int i = 0; i <= MainWindow.EntryList.Count - 1; i++)
+            {
+                if (MainWindow.EntryList[i].Title.Equals(ComBox_EntryList.SelectedItem.ToString()))
+                {
+                    selected = i;
+                    break;
+                }
+            }
+            MainWindow.EntryList.RemoveAt(selected);
+            UpdateList();
+        }
+        #endregion
+
+        //Takes the selected entry and displays it
         public void RefreshActiveEntry()
         {
             foreach (Entry ee in EntryList)
@@ -75,6 +110,7 @@ namespace Adventurer_Tour_Guide
             }
         }
 
+        //Adds all entries for the ComboBox list
         public void UpdateList()
         {
             sEntryList = new List<string>();
@@ -87,28 +123,8 @@ namespace Adventurer_Tour_Guide
             ComBox_EntryList.SelectedIndex = 0;
             RefreshActiveEntry();
         }
-
-        private void But_Add_Click(object sender, RoutedEventArgs e)
-        {
-            EntryEditor main = new EntryEditor(this);
-            main.ShowDialog();
-        }
-
-        private void But_Edit_Click(object sender, RoutedEventArgs e)
-        {
-            int selected = 0;
-            for(int i = 0; i > MainWindow.EntryList.Count-1; i++)
-            {
-                if (MainWindow.EntryList[i].Title.Equals(ComBox_EntryList.SelectedItem.ToString()))
-                {
-                    selected = i;
-                    break;   
-                }
-            }
-            EntryEditor main = new EntryEditor(this, selected);
-            main.ShowDialog();
-        }
-
+        
+        //Event for when new entry is selected in ComboBox (Refreshes display)
         private void ComBox_EntryList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
@@ -118,27 +134,10 @@ namespace Adventurer_Tour_Guide
             catch(Exception ee)
             {
                 Console.WriteLine(ee.Message);
-                
-
-            }
-            
+            }      
         }
-
-        private void But_Delete_Click(object sender, RoutedEventArgs e)
-        {
-            int selected = 0;
-            for (int i = 0; i > MainWindow.EntryList.Count-1; i++)
-            {
-                if (MainWindow.EntryList[i].Title.Equals(ComBox_EntryList.SelectedItem.ToString()))
-                {
-                    selected = i;
-                    break;
-                }
-            }
-            MainWindow.EntryList.RemoveAt(selected);
-            UpdateList();
-        }
-
+        
+        //Event for when application is closed (Saves to file and drive)
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             JsonBuilder.CreateJSON();
