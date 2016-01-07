@@ -21,6 +21,7 @@ namespace Adventurer_Tour_Guide
         static DriveService mService;
         static string[] Scopes = { DriveService.Scope.Drive };
         static string ApplicationName = "adventurers-tour-guide";
+        static string fileID = "null";
 
         public static JArray root = new JArray();
         public static readonly string Path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal) + "\\AdventurerTourGuide";
@@ -84,7 +85,15 @@ namespace Adventurer_Tour_Guide
             //write string to file
             System.IO.File.WriteAllText(JSONPath, json);
 
-            SaveJSONtoDrive();
+            if (!fileID.Equals("null"))
+            {
+                UpdateJSONonDrive();
+            }
+            else
+            {
+                CreateJSONonDrive();
+            }
+            
         }
 
         //Load JSON from file
@@ -99,38 +108,43 @@ namespace Adventurer_Tour_Guide
             return entries;
         }
 
-        //Save JSON to GDrive
-        public static void SaveJSONtoDrive()
+        //Creates JSON file on GDrive if one doesn't exist or if 1st run
+        public static void CreateJSONonDrive()
         {
       
             GetCred();
             // File's metadata.
             Google.Apis.Drive.v2.Data.File body = new Google.Apis.Drive.v2.Data.File();
-            body.Title = "ATGEntries.txt";
+            body.Title = "ATGEntries.json";
             body.Description = "Database JSON for Adventurer's Tour Guide";
-            //body.MimeType = "application/json";
-            body.MimeType = "text/plain";
-            body.Parents = new List<ParentReference>() { new ParentReference() { Id = "root" } };
+            body.MimeType = "application/json";
+            body.Parents = new List<ParentReference>() { new ParentReference() { Id = "Root" } };
 
             // File's content.
-            byte[] byteArray = System.IO.File.ReadAllBytes(Path + "\\ATGEntries.txt");
+            byte[] byteArray = System.IO.File.ReadAllBytes(Path + "\\ATGEntries.json");
             MemoryStream stream = new MemoryStream(byteArray);
             try
             {
-                FilesResource.InsertMediaUpload request = mService.Files.Insert(body, stream, "text/plain");
-                request.UploadAsync();
+                FilesResource.InsertMediaUpload request = mService.Files.Insert(body, stream, "application/json");
+                request.Upload();
 
                 Google.Apis.Drive.v2.Data.File file = request.ResponseBody;
 
                 // Uncomment the following line to print the File ID.
                 Console.WriteLine("File ID: " + file.Id);
             }
-            catch (Exception e)
+             catch (Exception e)
             {
                 Console.WriteLine("An error occurred: " + e.Message);
               
             }
     }
+
+        //Updates the JSON file on GDrive
+        public static void UpdateJSONonDrive()
+        {
+
+        }
 
         //Load JSON from GDrive
         public static void LoadJSONfromDrive()
@@ -149,7 +163,7 @@ namespace Adventurer_Tour_Guide
             {
                 string credPath = System.Environment.GetFolderPath(
                     System.Environment.SpecialFolder.Personal);
-                credPath = System.IO.Path.Combine(credPath, ".credentials/drive-dotnet-quickstart");
+                credPath = System.IO.Path.Combine(credPath, ".credentials/ATG_Client");
 
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.Load(stream).Secrets,
